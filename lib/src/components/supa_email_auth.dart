@@ -43,6 +43,114 @@ class MetaDataField {
   });
 }
 
+/// {@template selection_metadata_field}
+/// Represents a selection field for the signup form.
+///
+/// This class is used to create fields that allow selecting a value from a list of options.
+/// The selected value will be passed to the metadata of the user upon signup.
+///
+/// For example, to create a field for selecting a language:
+/// ```dart
+/// SelectionMetaDataField(
+///   label: 'Language',
+///   key: 'language',
+///   options: ['English', 'Spanish', 'French'],
+///   defaultButtonText: 'Select a language',
+/// )
+/// ```
+///
+/// Which will update the user's metadata accordingly:
+///
+/// ```dart
+/// { 'language': 'Spanish' }
+/// ```
+///
+/// You can also provide custom display and value options:
+/// ```dart
+/// SelectionMetaDataField(
+///   label: 'Language',
+///   key: 'language',
+///   options: [
+///     SelectionOption(display: 'English', value: 'en'),
+///     SelectionOption(display: 'Spanish', value: 'es'),
+///     SelectionOption(display: 'French', value: 'fr'),
+///   ],
+///   defaultButtonText: 'Select a language',
+/// )
+/// ```
+/// {@endtemplate}
+class SelectionMetaDataField extends MetaDataField {
+  /// The list of options to select from
+  final List<dynamic> options;
+
+  /// The text to display on the button when no option is selected
+  final String defaultButtonText;
+
+  /// Custom builder for the modal that shows the options
+  final Widget Function(BuildContext context, Function(dynamic) onSelect)?
+      modalBuilder;
+
+  /// Custom builder for displaying the selected option
+  final String Function(dynamic)? displayBuilder;
+
+  /// Custom builder for the value to store in metadata
+  final String Function(dynamic)? valueBuilder;
+
+  /// {@macro selection_metadata_field}
+  SelectionMetaDataField({
+    required super.label,
+    required super.key,
+    required this.options,
+    required this.defaultButtonText,
+    super.prefixIcon,
+    super.validator,
+    this.modalBuilder,
+    this.displayBuilder,
+    this.valueBuilder,
+  });
+
+  /// Get the display text for an option
+  String getDisplayText(dynamic option) {
+    if (displayBuilder != null) {
+      return displayBuilder!(option);
+    }
+
+    if (option is SelectionOption) {
+      return option.display;
+    }
+
+    return option.toString();
+  }
+
+  /// Get the value for an option
+  String getValue(dynamic option) {
+    if (valueBuilder != null) {
+      return valueBuilder!(option);
+    }
+
+    if (option is SelectionOption) {
+      return option.value;
+    }
+
+    return option.toString();
+  }
+}
+
+/// Represents an option for SelectionMetaDataField
+class SelectionOption {
+  /// The text to display for this option
+  final String display;
+
+  /// The value to store in metadata when this option is selected
+  final String value;
+
+  /// Creates a new SelectionOption
+  const SelectionOption({
+    required this.display,
+    required this.value,
+  });
+}
+
 /// {@template boolean_metadata_field}
 /// Represents a boolean metadata field for the signup form.
 ///
@@ -259,6 +367,9 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
   late bool _isSigningIn;
   late final Map<String, MetadataController> _metadataControllers;
 
+  // Map to store selected values for SelectionMetaDataField
+  final Map<String, String?> _selectionValues = {};
+
   bool _isLoading = false;
 
   /// The user has pressed forgot password button
@@ -294,6 +405,13 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
             : TextEditingController(),
       ),
     ));
+
+    // Initialize selection values
+    for (final field in widget.metadataFields ?? []) {
+      if (field is SelectionMetaDataField) {
+        _selectionValues[field.key] = null;
+      }
+    }
   }
 
   @override
@@ -457,6 +575,206 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
                                       contentPadding:
                                           const EdgeInsets.symmetric(
                                               horizontal: 4.0),
+                                    ),
+                                    if (field.hasError)
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 16, top: 4),
+                                        child: Text(
+                                          field.errorText!,
+                                          style: theme.textTheme.labelSmall
+                                              ?.copyWith(
+                                            color: theme.colorScheme.error,
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                );
+                              },
+                            )
+                          else if (metadataField is SelectionMetaDataField)
+                            // Render a selection field
+                            FormField<String>(
+                              initialValue: _selectionValues[metadataField.key],
+                              validator: (value) {
+                                if (metadataField.validator != null) {
+                                  return metadataField.validator!(value);
+                                }
+                                return null;
+                              },
+                              builder: (FormFieldState<String> field) {
+                                final theme = Theme.of(context);
+                                final selectedValue =
+                                    _selectionValues[metadataField.key];
+
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    InputDecorator(
+                                      decoration: InputDecoration(
+                                        labelText: selectedValue == null
+                                            ? null
+                                            : metadataField.label,
+                                        prefixIcon: metadataField.prefixIcon,
+                                        border: const OutlineInputBorder(),
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                vertical: 8.0,
+                                                horizontal: 12.0),
+                                        isDense: true,
+                                      ),
+                                      isEmpty: selectedValue == null,
+                                      child: InkWell(
+                                        onTap: () async {
+                                          if (metadataField.modalBuilder !=
+                                              null) {
+                                            // Use custom modal builder
+                                            final modalWidget =
+                                                metadataField.modalBuilder!(
+                                              context,
+                                              (selectedOption) {
+                                                // Just update the state with the selected value
+                                                // Don't call Navigator.pop here as the custom picker
+                                                // will handle its own navigation
+                                                setState(() {
+                                                  final value = metadataField
+                                                      .getValue(selectedOption);
+                                                  _selectionValues[metadataField
+                                                      .key] = value;
+                                                  field.didChange(value);
+                                                });
+                                              },
+                                            );
+
+                                            // Only show modal if widget is not empty
+                                            if (modalWidget is! SizedBox) {
+                                              await showModalBottomSheet(
+                                                context: context,
+                                                isScrollControlled: true,
+                                                builder: (context) =>
+                                                    modalWidget,
+                                              );
+                                            }
+                                          } else {
+                                            // Use default modal
+                                            await showModalBottomSheet(
+                                              context: context,
+                                              isScrollControlled: true,
+                                              builder: (context) {
+                                                return DraggableScrollableSheet(
+                                                  initialChildSize: 0.5,
+                                                  maxChildSize: 0.9,
+                                                  minChildSize: 0.3,
+                                                  expand: false,
+                                                  builder: (context,
+                                                      scrollController) {
+                                                    return Column(
+                                                      children: [
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(16.0),
+                                                          child: Text(
+                                                            metadataField.label,
+                                                            style: theme
+                                                                .textTheme
+                                                                .titleLarge,
+                                                          ),
+                                                        ),
+                                                        Divider(),
+                                                        Expanded(
+                                                          child:
+                                                              ListView.builder(
+                                                            controller:
+                                                                scrollController,
+                                                            itemCount:
+                                                                metadataField
+                                                                    .options
+                                                                    .length,
+                                                            itemBuilder:
+                                                                (context,
+                                                                    index) {
+                                                              final option =
+                                                                  metadataField
+                                                                          .options[
+                                                                      index];
+                                                              final displayText =
+                                                                  metadataField
+                                                                      .getDisplayText(
+                                                                          option);
+
+                                                              return ListTile(
+                                                                title: Text(
+                                                                    displayText),
+                                                                onTap: () {
+                                                                  setState(() {
+                                                                    final value =
+                                                                        metadataField
+                                                                            .getValue(option);
+                                                                    _selectionValues[
+                                                                        metadataField
+                                                                            .key] = value;
+                                                                    field.didChange(
+                                                                        value);
+                                                                  });
+                                                                  // Close the default modal
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                },
+                                                              );
+                                                            },
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                            );
+                                          }
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 8.0),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  selectedValue != null
+                                                      ? metadataField.options
+                                                          .where((option) =>
+                                                              metadataField
+                                                                  .getValue(
+                                                                      option) ==
+                                                              selectedValue)
+                                                          .map((option) =>
+                                                              metadataField
+                                                                  .getDisplayText(
+                                                                      option))
+                                                          .firstWhere(
+                                                              (_) => true,
+                                                              orElse: () =>
+                                                                  selectedValue)
+                                                      : metadataField
+                                                          .defaultButtonText,
+                                                  style: selectedValue == null
+                                                      ? TextStyle(
+                                                          color:
+                                                              theme.hintColor)
+                                                      : Theme.of(context)
+                                                          .textTheme
+                                                          .titleMedium,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                              Icon(Icons.arrow_drop_down),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                     if (field.hasError)
                                       Padding(
@@ -811,10 +1129,24 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
 
   /// Resolve the user_metadata coming from the metadataFields
   Map<String, dynamic> _resolveMetadataFieldsData() {
-    return Map.fromEntries(_metadataControllers.entries.map((entry) => MapEntry(
-        entry.key,
-        entry.value is TextEditingController
-            ? (entry.value as TextEditingController).text
-            : entry.value)));
+    final result = <String, dynamic>{};
+
+    // Add text field values
+    for (final entry in _metadataControllers.entries) {
+      if (entry.value is TextEditingController) {
+        result[entry.key] = (entry.value as TextEditingController).text;
+      } else {
+        result[entry.key] = entry.value;
+      }
+    }
+
+    // Add selection field values
+    for (final entry in _selectionValues.entries) {
+      if (entry.value != null) {
+        result[entry.key] = entry.value;
+      }
+    }
+
+    return result;
   }
 }

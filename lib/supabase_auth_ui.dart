@@ -14,3 +14,5 @@ export 'src/localizations/supa_reset_password_localization.dart';
 export 'src/localizations/supa_socials_auth_localization.dart';
 export 'src/localizations/supa_verify_phone_localization.dart';
 export 'package:supabase_flutter/supabase_flutter.dart';
+export 'src/utils/constants.dart';
+export 'src/utils/custom_icons.dart';
