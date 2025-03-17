@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_auth_ui/src/localizations/supa_reset_password_localization.dart';
 import 'package:supabase_auth_ui/src/utils/constants.dart';
+import 'package:supabase_auth_ui/src/utils/custom_icons.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// UI component to create password reset form
@@ -33,6 +34,9 @@ class _SupaResetPasswordState extends State<SupaResetPassword> {
   final _formKey = GlobalKey<FormState>();
   final _password = TextEditingController();
 
+  /// Password visibility state
+  bool _passwordVisible = false;
+
   @override
   void dispose() {
     _password.dispose();
@@ -58,7 +62,18 @@ class _SupaResetPasswordState extends State<SupaResetPassword> {
             decoration: InputDecoration(
               prefixIcon: const Icon(Icons.lock),
               label: Text(localization.enterPassword),
+              suffixIcon: IconButton(
+                icon: CustomEyeIcon(
+                  isVisible: _passwordVisible,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _passwordVisible = !_passwordVisible;
+                  });
+                },
+              ),
             ),
+            obscureText: !_passwordVisible,
             controller: _password,
           ),
           spacer(16),

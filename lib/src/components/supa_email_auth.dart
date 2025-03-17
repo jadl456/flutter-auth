@@ -2,6 +2,7 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_auth_ui/src/localizations/supa_email_auth_localization.dart';
 import 'package:supabase_auth_ui/src/utils/constants.dart';
+import 'package:supabase_auth_ui/src/utils/custom_icons.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// {@template metadata_field}
@@ -278,6 +279,9 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
   /// Whether the user is entering OTP code
   bool _isEnteringOtp = false;
 
+  /// Password visibility state for all password fields
+  bool _passwordVisible = false;
+
   @override
   void initState() {
     super.initState();
@@ -365,8 +369,18 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
                 decoration: InputDecoration(
                   prefixIcon: widget.prefixIconPassword,
                   label: Text(localization.enterPassword),
+                  suffixIcon: IconButton(
+                    icon: CustomEyeIcon(
+                      isVisible: _passwordVisible,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _passwordVisible = !_passwordVisible;
+                      });
+                    },
+                  ),
                 ),
-                obscureText: true,
+                obscureText: !_passwordVisible,
                 controller: _passwordController,
                 onFieldSubmitted: (_) {
                   if (widget.metadataFields == null || _isSigningIn) {
@@ -381,8 +395,18 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
                   decoration: InputDecoration(
                     prefixIcon: widget.prefixIconPassword,
                     label: Text(localization.confirmPassword),
+                    suffixIcon: IconButton(
+                      icon: CustomEyeIcon(
+                        isVisible: _passwordVisible,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _passwordVisible = !_passwordVisible;
+                        });
+                      },
+                    ),
                   ),
-                  obscureText: true,
+                  obscureText: !_passwordVisible,
                   validator: (value) {
                     if (value != _passwordController.text) {
                       return localization.confirmPasswordError;
@@ -544,8 +568,18 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
                   decoration: InputDecoration(
                     label: Text(localization.enterNewPassword),
                     prefixIcon: widget.prefixIconPassword,
+                    suffixIcon: IconButton(
+                      icon: CustomEyeIcon(
+                        isVisible: _passwordVisible,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _passwordVisible = !_passwordVisible;
+                        });
+                      },
+                    ),
                   ),
-                  obscureText: true,
+                  obscureText: !_passwordVisible,
                   validator: widget.passwordValidator ??
                       (value) {
                         if (value == null ||
@@ -562,8 +596,18 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
                   decoration: InputDecoration(
                     label: Text(localization.confirmPassword),
                     prefixIcon: widget.prefixIconPassword,
+                    suffixIcon: IconButton(
+                      icon: CustomEyeIcon(
+                        isVisible: _passwordVisible,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _passwordVisible = !_passwordVisible;
+                        });
+                      },
+                    ),
                   ),
-                  obscureText: true,
+                  obscureText: !_passwordVisible,
                   validator: (value) {
                     if (value != _newPasswordController.text) {
                       return localization.confirmPasswordError;

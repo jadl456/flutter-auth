@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_auth_ui/src/utils/constants.dart';
+import 'package:supabase_auth_ui/src/utils/custom_icons.dart';
 import 'package:supabase_auth_ui/supabase_auth_ui.dart';
 
 /// UI component to create a phone + password signin/ signup form
@@ -32,6 +33,9 @@ class _SupaPhoneAuthState extends State<SupaPhoneAuth> {
   final _formKey = GlobalKey<FormState>();
   final _phone = TextEditingController();
   final _password = TextEditingController();
+
+  /// Password visibility state
+  bool _passwordVisible = false;
 
   @override
   void initState() {
@@ -85,8 +89,18 @@ class _SupaPhoneAuthState extends State<SupaPhoneAuth> {
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.lock),
                 label: Text(localization.enterPassword),
+                suffixIcon: IconButton(
+                  icon: CustomEyeIcon(
+                    isVisible: _passwordVisible,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _passwordVisible = !_passwordVisible;
+                    });
+                  },
+                ),
               ),
-              obscureText: true,
+              obscureText: !_passwordVisible,
               controller: _password,
             ),
             spacer(16),
