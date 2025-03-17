@@ -2,7 +2,6 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_auth_ui/src/localizations/supa_email_auth_localization.dart';
 import 'package:supabase_auth_ui/src/utils/constants.dart';
-import 'package:supabase_auth_ui/src/utils/custom_icons.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// {@template metadata_field}
@@ -322,6 +321,7 @@ class SupaEmailAuth extends StatefulWidget {
   /// Icons or custom prefix widgets for email UI
   final Widget? prefixIconEmail;
   final Widget? prefixIconPassword;
+  final Widget? suffixIconPassword;
 
   /// Icon or custom prefix widget for OTP input field
   final Widget? prefixIconOtp;
@@ -350,6 +350,7 @@ class SupaEmailAuth extends StatefulWidget {
     this.isInitiallySigningIn = true,
     this.prefixIconEmail = const Icon(Icons.email),
     this.prefixIconPassword = const Icon(Icons.lock),
+    this.suffixIconPassword = const Icon(Icons.visibility_off),
     this.prefixIconOtp = const Icon(Icons.security),
     this.showConfirmPasswordField = false,
     this.useOtpForPasswordRecovery = false,
@@ -488,9 +489,10 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
                   prefixIcon: widget.prefixIconPassword,
                   label: Text(localization.enterPassword),
                   suffixIcon: IconButton(
-                    icon: CustomEyeIcon(
-                      isVisible: _passwordVisible,
-                    ),
+                    icon: widget.suffixIconPassword ??
+                        Icon(_passwordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off),
                     onPressed: () {
                       setState(() {
                         _passwordVisible = !_passwordVisible;
@@ -514,9 +516,10 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
                     prefixIcon: widget.prefixIconPassword,
                     label: Text(localization.confirmPassword),
                     suffixIcon: IconButton(
-                      icon: CustomEyeIcon(
-                        isVisible: _passwordVisible,
-                      ),
+                      icon: widget.suffixIconPassword ??
+                          Icon(_passwordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off),
                       onPressed: () {
                         setState(() {
                           _passwordVisible = !_passwordVisible;
@@ -887,9 +890,10 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
                     label: Text(localization.enterNewPassword),
                     prefixIcon: widget.prefixIconPassword,
                     suffixIcon: IconButton(
-                      icon: CustomEyeIcon(
-                        isVisible: _passwordVisible,
-                      ),
+                      icon: widget.suffixIconPassword ??
+                          Icon(_passwordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off),
                       onPressed: () {
                         setState(() {
                           _passwordVisible = !_passwordVisible;
@@ -915,9 +919,10 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
                     label: Text(localization.confirmPassword),
                     prefixIcon: widget.prefixIconPassword,
                     suffixIcon: IconButton(
-                      icon: CustomEyeIcon(
-                        isVisible: _passwordVisible,
-                      ),
+                      icon: widget.suffixIconPassword ??
+                          Icon(_passwordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off),
                       onPressed: () {
                         setState(() {
                           _passwordVisible = !_passwordVisible;

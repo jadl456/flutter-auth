@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_auth_ui/src/utils/constants.dart';
-import 'package:supabase_auth_ui/src/utils/custom_icons.dart';
 import 'package:supabase_auth_ui/supabase_auth_ui.dart';
 
 /// UI component to create a phone + password signin/ signup form
@@ -90,8 +88,8 @@ class _SupaPhoneAuthState extends State<SupaPhoneAuth> {
                 prefixIcon: const Icon(Icons.lock),
                 label: Text(localization.enterPassword),
                 suffixIcon: IconButton(
-                  icon: CustomEyeIcon(
-                    isVisible: _passwordVisible,
+                  icon: Icon(
+                    _passwordVisible ? Icons.visibility : Icons.visibility_off,
                   ),
                   onPressed: () {
                     setState(() {
