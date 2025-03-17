@@ -14,9 +14,8 @@ void main() async {
 
   /// TODO: replace with your credentials
   await Supabase.initialize(
-    url: 'https://berfazryxyqjwakntpwg.supabase.co',
-    anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJlcmZhenJ5eHlxandha250cHdnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjUzMjEwMDEsImV4cCI6MjA0MDg5NzAwMX0.fc1VrMz0_fseo7pb_AjZmAKtbzGAitWFCeK9V7RqaMU',
+    url: '',
+    anonKey: '',
   );
   runApp(const MyApp());
 }
