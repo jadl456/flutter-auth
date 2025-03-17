@@ -321,7 +321,8 @@ class SupaEmailAuth extends StatefulWidget {
   /// Icons or custom prefix widgets for email UI
   final Widget? prefixIconEmail;
   final Widget? prefixIconPassword;
-  final Widget? suffixIconPassword;
+  final Widget? suffixIconPasswordVisible;
+  final Widget? suffixIconPasswordHidden;
 
   /// Icon or custom prefix widget for OTP input field
   final Widget? prefixIconOtp;
@@ -350,7 +351,8 @@ class SupaEmailAuth extends StatefulWidget {
     this.isInitiallySigningIn = true,
     this.prefixIconEmail = const Icon(Icons.email),
     this.prefixIconPassword = const Icon(Icons.lock),
-    this.suffixIconPassword = const Icon(Icons.visibility_off),
+    this.suffixIconPasswordVisible = const Icon(Icons.visibility),
+    this.suffixIconPasswordHidden = const Icon(Icons.visibility_off),
     this.prefixIconOtp = const Icon(Icons.security),
     this.showConfirmPasswordField = false,
     this.useOtpForPasswordRecovery = false,
@@ -489,10 +491,11 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
                   prefixIcon: widget.prefixIconPassword,
                   label: Text(localization.enterPassword),
                   suffixIcon: IconButton(
-                    icon: widget.suffixIconPassword ??
-                        Icon(_passwordVisible
-                            ? Icons.visibility
-                            : Icons.visibility_off),
+                    icon: _passwordVisible
+                        ? (widget.suffixIconPasswordVisible ??
+                            const Icon(Icons.visibility))
+                        : (widget.suffixIconPasswordHidden ??
+                            const Icon(Icons.visibility_off)),
                     onPressed: () {
                       setState(() {
                         _passwordVisible = !_passwordVisible;
@@ -516,10 +519,11 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
                     prefixIcon: widget.prefixIconPassword,
                     label: Text(localization.confirmPassword),
                     suffixIcon: IconButton(
-                      icon: widget.suffixIconPassword ??
-                          Icon(_passwordVisible
-                              ? Icons.visibility
-                              : Icons.visibility_off),
+                      icon: _passwordVisible
+                          ? (widget.suffixIconPasswordVisible ??
+                              const Icon(Icons.visibility))
+                          : (widget.suffixIconPasswordHidden ??
+                              const Icon(Icons.visibility_off)),
                       onPressed: () {
                         setState(() {
                           _passwordVisible = !_passwordVisible;
@@ -890,10 +894,11 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
                     label: Text(localization.enterNewPassword),
                     prefixIcon: widget.prefixIconPassword,
                     suffixIcon: IconButton(
-                      icon: widget.suffixIconPassword ??
-                          Icon(_passwordVisible
-                              ? Icons.visibility
-                              : Icons.visibility_off),
+                      icon: _passwordVisible
+                          ? (widget.suffixIconPasswordVisible ??
+                              const Icon(Icons.visibility))
+                          : (widget.suffixIconPasswordHidden ??
+                              const Icon(Icons.visibility_off)),
                       onPressed: () {
                         setState(() {
                           _passwordVisible = !_passwordVisible;
@@ -919,10 +924,11 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
                     label: Text(localization.confirmPassword),
                     prefixIcon: widget.prefixIconPassword,
                     suffixIcon: IconButton(
-                      icon: widget.suffixIconPassword ??
-                          Icon(_passwordVisible
-                              ? Icons.visibility
-                              : Icons.visibility_off),
+                      icon: _passwordVisible
+                          ? (widget.suffixIconPasswordVisible ??
+                              const Icon(Icons.visibility))
+                          : (widget.suffixIconPasswordHidden ??
+                              const Icon(Icons.visibility_off)),
                       onPressed: () {
                         setState(() {
                           _passwordVisible = !_passwordVisible;

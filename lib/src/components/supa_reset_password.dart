@@ -36,6 +36,10 @@ class _SupaResetPasswordState extends State<SupaResetPassword> {
   /// Password visibility state
   bool _passwordVisible = false;
 
+  /// Icons for password visibility toggle
+  final Widget _suffixIconPasswordVisible = const Icon(Icons.visibility);
+  final Widget _suffixIconPasswordHidden = const Icon(Icons.visibility_off);
+
   @override
   void dispose() {
     _password.dispose();
@@ -62,9 +66,9 @@ class _SupaResetPasswordState extends State<SupaResetPassword> {
               prefixIcon: const Icon(Icons.lock),
               label: Text(localization.enterPassword),
               suffixIcon: IconButton(
-                icon: Icon(
-                  _passwordVisible ? Icons.visibility : Icons.visibility_off,
-                ),
+                icon: _passwordVisible
+                    ? _suffixIconPasswordVisible
+                    : _suffixIconPasswordHidden,
                 onPressed: () {
                   setState(() {
                     _passwordVisible = !_passwordVisible;
