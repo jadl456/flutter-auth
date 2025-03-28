@@ -274,6 +274,7 @@ class _SupaSocialsAuthState extends State<SupaSocialsAuth> {
           width: 48,
           child: Icon(
             socialProvider.iconData,
+            size: 48,
             color: iconColor,
           ),
         );
