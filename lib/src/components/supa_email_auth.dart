@@ -333,6 +333,9 @@ class SupaEmailAuth extends StatefulWidget {
   /// Whether to use OTP for password recovery instead of magic link
   final bool useOtpForPasswordRecovery;
 
+  /// Whether the app is in dark mode, affects button colors for iOS
+  final bool isDarkMode;
+
   /// {@macro supa_email_auth}
   const SupaEmailAuth({
     super.key,
@@ -356,6 +359,7 @@ class SupaEmailAuth extends StatefulWidget {
     this.prefixIconOtp = const Icon(Icons.security),
     this.showConfirmPasswordField = false,
     this.useOtpForPasswordRecovery = false,
+    this.isDarkMode = false,
   });
 
   @override

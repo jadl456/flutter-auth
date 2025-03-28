@@ -31,14 +31,14 @@ extension on OAuthProvider {
         _ => Icons.close,
       };
 
-  Color get btnBgColor => switch (this) {
-        OAuthProvider.apple => Colors.black,
+  Color getBtnBgColor(bool isDarkMode) => switch (this) {
+        OAuthProvider.apple => isDarkMode ? Colors.white : Colors.black,
         OAuthProvider.azure => Colors.blueAccent,
         OAuthProvider.bitbucket => Colors.blue,
         OAuthProvider.discord => Colors.purple,
         OAuthProvider.facebook => const Color(0xFF3b5998),
         OAuthProvider.figma => const Color.fromRGBO(241, 77, 27, 1),
-        OAuthProvider.github => Colors.black,
+        OAuthProvider.github => isDarkMode ? Colors.white : Colors.black,
         OAuthProvider.gitlab => Colors.deepOrange,
         OAuthProvider.google => Colors.white,
         OAuthProvider.kakao => const Color(0xFFFFE812),
@@ -48,10 +48,18 @@ extension on OAuthProvider {
         OAuthProvider.slack => const Color.fromRGBO(74, 21, 75, 1),
         OAuthProvider.spotify => Colors.green,
         OAuthProvider.twitch => Colors.purpleAccent,
-        OAuthProvider.twitter => Colors.black,
+        OAuthProvider.twitter => isDarkMode ? Colors.white : Colors.black,
         OAuthProvider.workos => const Color.fromRGBO(99, 99, 241, 1),
         // ignore: unreachable_switch_case
-        _ => Colors.black,
+        _ => isDarkMode ? Colors.white : Colors.black,
+      };
+
+  Color getTextColor(bool isDarkMode) => switch (this) {
+        OAuthProvider.apple => isDarkMode ? Colors.black : Colors.white,
+        OAuthProvider.github => isDarkMode ? Colors.black : Colors.white,
+        OAuthProvider.twitter => isDarkMode ? Colors.black : Colors.white,
+        OAuthProvider.google => Colors.black,
+        _ => Colors.white,
       };
 
   String get labelText =>
@@ -128,6 +136,9 @@ class SupaSocialsAuth extends StatefulWidget {
   /// Custom LaunchMode support
   final LaunchMode authScreenLaunchMode;
 
+  /// Whether the app is in dark mode, affects button colors for iOS
+  final bool isDarkMode;
+
   const SupaSocialsAuth({
     super.key,
     this.nativeGoogleAuthConfig,
@@ -143,6 +154,7 @@ class SupaSocialsAuth extends StatefulWidget {
     this.queryParams,
     this.localization = const SupaSocialsAuthLocalization(),
     this.authScreenLaunchMode = LaunchMode.platformDefault,
+    this.isDarkMode = false,
   });
 
   @override
@@ -248,11 +260,14 @@ class _SupaSocialsAuthState extends State<SupaSocialsAuth> {
       (index) {
         final socialProvider = providers[index];
 
-        Color? foregroundColor = coloredBg ? Colors.white : null;
-        Color? backgroundColor = coloredBg ? socialProvider.btnBgColor : null;
+        Color? foregroundColor =
+            coloredBg ? socialProvider.getTextColor(widget.isDarkMode) : null;
+        Color? backgroundColor =
+            coloredBg ? socialProvider.getBtnBgColor(widget.isDarkMode) : null;
         Color? overlayColor = coloredBg ? Colors.white10 : null;
 
-        Color? iconColor = coloredBg ? Colors.white : null;
+        Color? iconColor =
+            coloredBg ? socialProvider.getTextColor(widget.isDarkMode) : null;
 
         Widget iconWidget = SizedBox(
           height: 48,
