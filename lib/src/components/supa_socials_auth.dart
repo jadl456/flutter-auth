@@ -139,6 +139,9 @@ class SupaSocialsAuth extends StatefulWidget {
   /// Whether the app is in dark mode, affects button colors for iOS
   final bool isDarkMode;
 
+  /// Size of the social provider icons
+  final double iconSize;
+
   const SupaSocialsAuth({
     super.key,
     this.nativeGoogleAuthConfig,
@@ -155,6 +158,7 @@ class SupaSocialsAuth extends StatefulWidget {
     this.localization = const SupaSocialsAuthLocalization(),
     this.authScreenLaunchMode = LaunchMode.platformDefault,
     this.isDarkMode = false,
+    this.iconSize = 24.0,
   });
 
   @override
@@ -270,20 +274,20 @@ class _SupaSocialsAuthState extends State<SupaSocialsAuth> {
             coloredBg ? socialProvider.getTextColor(widget.isDarkMode) : null;
 
         Widget iconWidget = SizedBox(
-          height: 48,
-          width: 48,
+          height: widget.iconSize,
+          width: widget.iconSize,
           child: Icon(
             socialProvider.iconData,
-            size: 48,
             color: iconColor,
+            size: widget.iconSize * 0.75,
           ),
         );
         if (socialProvider == OAuthProvider.google && coloredBg) {
           iconWidget = Image.asset(
             'assets/logos/google_light.png',
             package: 'supabase_auth_ui',
-            width: 48,
-            height: 48,
+            width: widget.iconSize,
+            height: widget.iconSize,
           );
           foregroundColor = Colors.black;
           backgroundColor = Colors.white;
@@ -295,24 +299,24 @@ class _SupaSocialsAuthState extends State<SupaSocialsAuth> {
             iconWidget = Image.asset(
               'assets/logos/notion.png',
               package: 'supabase_auth_ui',
-              width: 48,
-              height: 48,
+              width: widget.iconSize,
+              height: widget.iconSize,
             );
             break;
           case OAuthProvider.kakao:
             iconWidget = Image.asset(
               'assets/logos/kakao.png',
               package: 'supabase_auth_ui',
-              width: 48,
-              height: 48,
+              width: widget.iconSize,
+              height: widget.iconSize,
             );
             break;
           case OAuthProvider.keycloak:
             iconWidget = Image.asset(
               'assets/logos/keycloak.png',
               package: 'supabase_auth_ui',
-              width: 48,
-              height: 48,
+              width: widget.iconSize,
+              height: widget.iconSize,
             );
             break;
           case OAuthProvider.workos:
@@ -320,8 +324,8 @@ class _SupaSocialsAuthState extends State<SupaSocialsAuth> {
               'assets/logos/workOS.png',
               package: 'supabase_auth_ui',
               color: coloredBg ? Colors.white : null,
-              width: 48,
-              height: 48,
+              width: widget.iconSize,
+              height: widget.iconSize,
             );
             break;
           default:
