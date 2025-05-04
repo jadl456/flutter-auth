@@ -336,6 +336,9 @@ class SupaEmailAuth extends StatefulWidget {
   /// Whether the app is in dark mode, affects button colors for iOS
   final bool isDarkMode;
 
+  /// Whether the toggle between sign-in and sign-up is enabled
+  final bool isToggleEnabled;
+
   /// {@macro supa_email_auth}
   const SupaEmailAuth({
     super.key,
@@ -360,6 +363,7 @@ class SupaEmailAuth extends StatefulWidget {
     this.showConfirmPasswordField = false,
     this.useOtpForPasswordRecovery = false,
     this.isDarkMode = false,
+    this.isToggleEnabled = true,
   });
 
   @override
@@ -860,20 +864,21 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
                   child: Text(localization.forgotPassword),
                 ),
               ],
-              TextButton(
-                key: const ValueKey('toggleSignInButton'),
-                onPressed: () {
-                  setState(() {
-                    _isRecoveringPassword = false;
-                    _isSigningIn = !_isSigningIn;
-                  });
-                  widget.onToggleSignIn?.call(_isSigningIn);
-                  widget.onToggleRecoverPassword?.call(_isRecoveringPassword);
-                },
-                child: Text(_isSigningIn
-                    ? localization.dontHaveAccount
-                    : localization.haveAccount),
-              ),
+              if (widget.isToggleEnabled) ...[
+                TextButton(
+                  key: const ValueKey('toggleSignInButton'),
+                  onPressed: () {
+                    setState(() {
+                      _isSigningIn = !_isSigningIn;
+                      _isRecoveringPassword = false;
+                    });
+                    widget.onToggleSignIn?.call(_isSigningIn);
+                  },
+                  child: Text(_isSigningIn
+                      ? localization.dontHaveAccount
+                      : localization.haveAccount),
+                ),
+              ],
             ],
             if (_isSigningIn && _isRecoveringPassword) ...[
               spacer(16),
