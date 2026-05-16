@@ -5,6 +5,8 @@
 </p>
 A simple library of predefined widgets to easily and quickly create auth components using Flutter and Supabase.
 
+> **Note:** This project is a fork of [supabase-community/flutter-auth-ui](https://github.com/supabase-community/flutter-auth-ui).
+
 ![Supabase Auth UI](https://raw.githubusercontent.com/supabase-community/flutter-auth-ui/main/screenshots/supabase_auth_ui.png 'Supabase Auth UI Sample')
 
 ## Email Auth
